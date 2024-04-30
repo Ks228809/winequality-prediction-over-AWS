@@ -1,17 +1,32 @@
-FROM ubuntu:20.04
-# Install Java and other dependencies
-RUN apt-get update -y \
-    && apt-get install openjdk-8-jdk -y \
-    && apt-get install python3-pip -y \
-    && apt-get install -y wget
-RUN adduser myuser1
-RUN wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
-RUN tar xvf spark-3.5.1-bin-hadoop3.tgz -C /opt
-RUN chown -R myuser1:myuser1 /opt/spark-3.5.1-bin-hadoop3
-RUN ln -fs spark-3.5.1-bin-hadoop3 /opt/spark
-RUN echo -e "export SPARK_HOME=/opt/spark\nPATH=$PATH:$SPARK_HOME/bin\nexport PATH" >> ~/.bash_profile
-RUN . ~/.bash_profile
-COPY --chown=myuser1:myuser1 . .
-RUN pip3 install -r requirements.txt
-ENTRYPOINT ["runuser", "-u", "myuser1", "--", "python3"]
-CMD ["model_training.py"]
+FROM openjdk:8-jdk-alpine
+
+LABEL maintainer="Neeharika Pisipati | Neeharikap"
+LABEL version="v1"
+
+ENV DAEMON_RUN=true
+ENV SPARK_VERSION=2.4.5
+ENV HADOOP_VERSION=2.7.3
+ENV SCALA_VERSION=2.11
+ENV SCALA_HOME=/usr/share/scala
+
+RUN apk update && \
+	apk add --no-cache libc6-compat ca-certificates && \
+	ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2 && \
+	rm -rf /var/cache/apk/*
+
+RUN set -ex
+RUN mkdir -p datset
+
+COPY data/ data/
+COPY target/ target/
+ADD target/*.jar app.jar
+RUN rm data/TrainingDataset.csv
+RUN rm data/ValidationDataset.csv
+
+
+VOLUME /tmp
+
+ADD target/*.jar app.jar
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+
