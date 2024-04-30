@@ -1,12 +1,12 @@
-# PySpark Processing on AWS EMR
+# Spark Processing on AWS EMR
 
-This repository provides instructions for setting up and running PySpark jobs using Amazon EMR and S3. It is intended to assist users in handling large-scale data processing tasks using Apache Spark in a distributed environment.
+This repository provides instructions for setting up and running Spark jobs using Amazon EMR and S3. It is intended to assist users in handling large-scale data processing tasks using Apache Spark in a distributed environment.
 
 ## Prerequisites
 
 - An AWS account with appropriate permissions to create EMR clusters, S3 buckets, and EC2 instances.
 - AWS CLI installed and configured on your local machine.
-- Basic familiarity with Python and Spark.
+- Basic familiarity with Java and Spark.
 
 ## Setup Instructions
 
@@ -14,10 +14,10 @@ This repository provides instructions for setting up and running PySpark jobs us
 
 Ensure your S3 bucket `aws-logs-992382847407-us-east-1` is prepared:
 
-### 2. Prepare Your PySpark Script
+### 2. Prepare Your Spark Script
 
-Upload your PySpark script and necessary datasets to S3:
-aws s3 cp model_training.py s3://aws-logs-992382847407-us-east-1/EMAP/scripts/
+Upload your shell script and necessary datasets to S3:
+aws s3 cp shellscript.sh s3://aws-logs-992382847407-us-east-1/EMAP/scripts/
 aws s3 cp TrainingDataset.csv s3://aws-logs-992382847407-us-east-1/EMAP/data/
 
 
@@ -32,7 +32,7 @@ Create an EMR cluster with Spark installed using the following command:
  --ec2-attributes KeyName=emr  --log-uri s3://aws-logs-992382847407-us-east-1
  
 
-### 4. Monitor and Manage the PySpark Job
+### 4. Monitor and Manage the Spark Job
 
 Monitor your job through the EMR console and access logs at:
 
